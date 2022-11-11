@@ -1,0 +1,462 @@
+FUNCTION_BLOCK FuzzySue
+
+VAR_INPUT
+	
+	PacmanDistance : REAL;
+	PacmanDistanceConfidence : REAL;
+	PacmanToPillDistance : REAL;
+	PacmanToPillDistanceConfidence : REAL;
+	PacmanToClosestPPillDistance : REAL;
+	PacmanToClosestPPillDistanceConfidence : REAL;
+	EdibleTime : REAL;
+	EdibleTimeConfidence : REAL;
+	Edible : REAL;
+	EdibleConfidence : REAL;
+	DistanceToClosestPPill : REAL;
+	DistanceToClosestPPillConfidence : REAL;
+	NearestGhostDistance : REAL;
+	NearestGhostDistanceConfidence : REAL;
+	PacmanNode : REAL;
+	PacmanNodeConfidence : REAL;
+	ClosestPPillNode : REAL;
+	ClosestPPillNodeConfidence : REAL;
+	PacmanClosestPPillNode : REAL;
+	PacmanClosestPPillNodeConfidence : REAL;
+	
+	
+END_VAR
+
+VAR_OUTPUT
+	RunToQuadrant : REAL;
+	RunAwayFromPacman : REAL;
+	StayAtDistance : REAL;
+	RunFromNearbyGhost : REAL;
+	
+	ChasePacman : REAL;
+	GoToClosestPPill : REAL;
+	GoToPacManClosestPPill : REAL;
+	
+	RandomMove : REAL;
+	
+END_VAR
+
+//--------------------------------
+
+FUZZIFY PacmanDistance
+	TERM close := trape -2 -1 40 80;
+	TERM medium := trape 30 50 80 100;
+	TERM far := trape 90 150 1000 2000;
+END_FUZZIFY
+
+FUZZIFY PacmanDistanceConfidence
+	TERM low := (0,1)(25,1)(50,0) ; 
+	TERM medium := gauss 50 25;
+	TERM high := (50,0)(75,1)(100,1);
+END_FUZZIFY
+
+FUZZIFY PacmanToPillDistance
+	TERM close := gbell -5 20 20;
+	TERM medium := gbell 25 80 30; 
+	TERM far := gbell 90 600 500;
+END_FUZZIFY
+
+FUZZIFY PacmanToPillDistanceConfidence
+	TERM low := (0,1)(25,1)(50,0) ; 
+	TERM medium := gauss 50 25;
+	TERM high := (50,0)(75,1)(100,1);
+END_FUZZIFY
+
+FUZZIFY PacmanToClosestPPillDistance
+	TERM close := gbell -5 40 20;
+	TERM medium := gbell 50 90 35;
+	TERM far := gbell 110 600 500;
+END_FUZZIFY
+
+FUZZIFY PacmanToClosestPPillDistanceConfidence
+	TERM low := (0,1)(25,1)(50,0) ; 
+	TERM medium := gauss 50 25;
+	TERM high := (50,0)(75,1)(100,1);
+END_FUZZIFY
+
+FUZZIFY EdibleTime
+	TERM short := gbell -5 20 30;
+	TERM medium := gbell 40 70 25;
+	TERM large := gbell 80 600 500;
+END_FUZZIFY
+
+FUZZIFY Edible
+	TERM true := 1;
+	TERM false := 0;
+END_FUZZIFY
+
+FUZZIFY DistanceToClosestPPill
+	TERM close := gbell -5 20 20;
+	TERM medium := gbell 25 80 30; 
+	TERM far := gbell 90 600 500;
+END_FUZZIFY
+
+FUZZIFY DistanceToClosestPPillConfidence
+	TERM low := (0,1)(25,1)(50,0) ; 
+	TERM medium := gauss 50 25;
+	TERM high := (50,0)(75,1)(100,1);
+END_FUZZIFY
+
+FUZZIFY NearestGhostDistance
+	TERM close := trape -2 -1 40 80;
+	TERM medium := trape 30 50 80 100;
+	TERM far := trape 90 150 1000 2000;
+END_FUZZIFY
+
+FUZZIFY PacmanNode
+	TERM unique := trape -2 -1 100 100;
+END_FUZZIFY
+
+FUZZIFY ClosestPPillNode
+	TERM unique := trape -2 -1 100 100;
+END_FUZZIFY
+
+FUZZIFY PacmanClosestPPillNode
+	TERM unique := trape -2 -1 100 100;
+END_FUZZIFY
+	
+
+DEFUZZIFY RunToQuadrant
+	TERM calm := (0,1) (5,1) (15,0);
+	TERM nervious := gauss 15 5;
+	TERM emergency := (15,0) (25,1) (30,1);
+	METHOD : COG;
+	DEFAULT := 0;
+END_DEFUZZIFY
+
+DEFUZZIFY RunAwayFromPacman
+	TERM calm := (0,1) (5,1) (15,0);
+	TERM nervious := gauss 15 5;
+	TERM emergency := (15,0) (25,1) (30,1);
+	METHOD : COG;
+	DEFAULT := 0;
+END_DEFUZZIFY
+
+DEFUZZIFY StayAtDistance
+	TERM calm := (0,1) (5,1) (15,0);
+	TERM nervious := gauss 15 5;
+	TERM emergency := (15,0) (25,1) (30,1);
+	METHOD : COG;
+	DEFAULT := 0;
+END_DEFUZZIFY
+
+DEFUZZIFY RunFromNearbyGhost
+	TERM calm := (0,1) (5,1) (15,0);
+	TERM nervious := gauss 15 5;
+	TERM emergency := (15,0) (25,1) (30,1);
+	METHOD : COG;
+	DEFAULT := 0;
+END_DEFUZZIFY
+
+
+
+DEFUZZIFY ChasePacman
+	TERM calm := (0,1) (5,1) (15,0);
+	TERM nervious := gauss 15 5;
+	TERM emergency := (15,0) (25,1) (30,1);
+	METHOD : COG;
+	DEFAULT := 0;
+END_DEFUZZIFY
+	
+DEFUZZIFY GoToClosestPPill
+	TERM calm := (0,1) (5,1) (15,0);
+	TERM nervious := gauss 15 5;
+	TERM emergency := (15,0) (25,1) (30,1);
+	METHOD : COG;
+	DEFAULT := 0;
+END_DEFUZZIFY
+
+DEFUZZIFY GoToPacManClosestPPill
+	TERM calm := (0,1) (5,1) (15,0);
+	TERM nervious := gauss 15 5;
+	TERM emergency := (15,0) (25,1) (30,1);
+	METHOD : COG;
+	DEFAULT := 0;
+END_DEFUZZIFY
+
+
+DEFUZZIFY RandomMove
+	TERM calm := (0,1) (5,1) (15,0);
+	TERM nervious := gauss 15 5;
+	TERM emergency := (15,0) (25,1) (30,1); 
+	METHOD : COG;
+	DEFAULT := 0;
+END_DEFUZZIFY
+
+RULEBLOCK sueRules
+	AND : MIN;			// Use 'min' for 'and' (also implicit use 'max' for 'or' to fulfill DeMorgan's Law)
+	ACT : MIN;			// Use 'min' activation method
+	ACCU : MAX;			// Use 'MAX' accumulation method (Other options PROBOR and SUM)
+	
+	RULE 1 : IF PacmanDistance IS far AND PacmanDistanceConfidence IS high AND PacmanToClosestPPillDistance IS close AND PacmanToClosestPPillDistanceConfidence IS high THEN StayAtDistance IS calm;
+	RULE 2 : IF PacmanDistance IS medium AND PacmanDistanceConfidence IS high AND PacmanToClosestPPillDistance IS close AND PacmanToClosestPPillDistanceConfidence IS high THEN StayAtDistance IS calm;
+	RULE 3 : IF PacmanDistance IS far AND PacmanDistanceConfidence IS medium AND PacmanToClosestPPillDistance IS close AND PacmanToClosestPPillDistanceConfidence IS high THEN StayAtDistance IS nervious;
+	RULE 4 : IF PacmanDistance IS medium AND PacmanDistanceConfidence IS medium AND PacmanToClosestPPillDistance IS close AND PacmanToClosestPPillDistanceConfidence IS high THEN StayAtDistance IS nervious;	
+	RULE 5 : IF PacmanDistance IS medium AND PacmanDistanceConfidence IS low AND PacmanToClosestPPillDistance IS close AND PacmanToClosestPPillDistanceConfidence IS medium THEN StayAtDistance IS calm;
+	RULE 6 : IF PacmanDistance IS medium AND PacmanDistanceConfidence IS medium AND PacmanToClosestPPillDistance IS close AND PacmanToClosestPPillDistanceConfidence IS high THEN StayAtDistance IS nervious;
+	RULE 7 : IF PacmanDistance IS close AND PacmanDistanceConfidence IS high AND PacmanToClosestPPillDistance IS close AND PacmanToClosestPPillDistanceConfidence IS high THEN StayAtDistance IS emergency;
+	RULE 8 : IF PacmanDistance IS close AND PacmanDistanceConfidence IS medium AND PacmanToClosestPPillDistance IS close AND PacmanToClosestPPillDistanceConfidence IS high THEN StayAtDistance IS emergency;
+	RULE 9 : IF PacmanDistance IS close AND PacmanDistanceConfidence IS high AND PacmanToClosestPPillDistance IS medium AND PacmanToClosestPPillDistanceConfidence IS high THEN StayAtDistance IS emergency;
+	RULE 10 : IF PacmanDistance IS close AND PacmanDistanceConfidence IS medium AND PacmanToClosestPPillDistance IS close AND PacmanToClosestPPillDistanceConfidence IS medium THEN StayAtDistance IS nervious;
+	RULE 11 : IF PacmanDistance IS medium AND PacmanDistanceConfidence IS high AND Edible IS true AND NearestGhostDistance IS medium THEN StayAtDistance IS emergency;
+	RULE 12 : IF PacmanDistance IS medium AND PacmanDistanceConfidence IS high AND Edible IS true AND EdibleTime IS medium THEN StayAtDistance IS emergency;
+	RULE 13 : IF PacmanDistance IS medium AND PacmanDistanceConfidence IS medium AND Edible IS true AND EdibleTime IS medium THEN StayAtDistance IS nervious;
+	RULE 14 : IF PacmanDistance IS medium AND PacmanDistanceConfidence IS high AND Edible IS true AND EdibleTime IS short THEN StayAtDistance IS calm;
+	RULE 15 : IF PacmanDistance IS medium AND PacmanDistanceConfidence IS medium AND Edible IS true AND EdibleTime IS medium THEN StayAtDistance IS emergency;
+
+	
+	RULE 16 : IF PacmanDistance IS medium AND PacmanDistanceConfidence IS high AND PacmanToClosestPPillDistance IS close AND PacmanToClosestPPillDistanceConfidence IS high AND NearestGhostDistance IS close THEN RunToQuadrant IS emergency;
+	RULE 17 : IF PacmanDistance IS far AND PacmanDistanceConfidence IS high AND NearestGhostDistance IS medium THEN RunToQuadrant IS nervious;
+	RULE 18 : IF PacmanDistance IS medium AND PacmanDistanceConfidence IS medium AND PacmanToClosestPPillDistance IS close AND PacmanToClosestPPillDistanceConfidence IS medium AND NearestGhostDistance IS close THEN RunToQuadrant IS nervious;
+	RULE 19 : IF Edible IS true AND EdibleTime IS medium AND NearestGhostDistance IS close THEN RunToQuadrant IS emergency;
+	RULE 20 : IF Edible IS true AND EdibleTime IS large AND NearestGhostDistance IS close THEN RunToQuadrant IS emergency;
+	RULE 21 : IF Edible IS true AND EdibleTime IS short AND NearestGhostDistance IS close THEN RunToQuadrant IS nervious;
+	RULE 22 : IF Edible IS true AND EdibleTime IS short AND NearestGhostDistance IS close THEN RunToQuadrant IS calm;
+	
+	
+
+	RULE 23 : IF Edible IS true AND PacmanDistance IS close AND PacmanDistanceConfidence IS high THEN RunAwayFromPacman IS emergency;
+	RULE 24 : IF Edible IS true AND PacmanDistance IS close AND PacmanDistanceConfidence IS medium THEN RunAwayFromPacman IS emergency;
+	RULE 25 : IF Edible IS true AND PacmanDistance IS medium AND PacmanDistanceConfidence IS high THEN RunAwayFromPacman IS nervious;
+	RULE 26 : IF Edible IS true AND PacmanDistance IS medium AND PacmanDistanceConfidence IS medium THEN RunAwayFromPacman IS nervious;
+	RULE 27 : IF Edible IS true AND PacmanDistance IS far AND PacmanDistanceConfidence IS high THEN RunAwayFromPacman IS calm;
+	RULE 28 : IF Edible IS true AND PacmanDistance IS far AND PacmanDistanceConfidence IS medium THEN RunAwayFromPacman IS calm;
+	RULE 29 : IF Edible IS true AND PacmanDistance IS close AND PacmanDistanceConfidence IS low THEN RunAwayFromPacman IS nervious;
+	RULE 30 : IF Edible IS true AND PacmanDistance IS close AND PacmanDistanceConfidence IS medium THEN RunAwayFromPacman IS nervious;
+	RULE 31 : IF Edible IS true AND PacmanDistance IS medium AND PacmanDistanceConfidence IS low THEN RunAwayFromPacman IS nervious;
+	RULE 31 : IF Edible IS true AND PacmanDistance IS far AND PacmanDistanceConfidence IS low THEN RunAwayFromPacman IS calm;
+	
+	
+
+	RULE 32 : IF Edible IS true AND PacmanDistance IS close AND PacmanDistanceConfidence IS high AND NearestGhostDistance IS close THEN RunFromNearbyGhost IS emergency;
+	RULE 33 : IF Edible IS true AND PacmanDistance IS close AND PacmanDistanceConfidence IS medium AND NearestGhostDistance IS close THEN RunFromNearbyGhost IS emergency;
+	RULE 34 : IF Edible IS true AND PacmanDistance IS close AND PacmanDistanceConfidence IS medium AND NearestGhostDistance IS medium THEN RunFromNearbyGhost IS nervious;
+	RULE 35 : IF Edible IS true AND PacmanDistance IS close AND PacmanDistanceConfidence IS low AND NearestGhostDistance IS close THEN RunFromNearbyGhost IS nervious;
+	RULE 36 : IF Edible IS true AND PacmanDistance IS close AND PacmanDistanceConfidence IS low AND NearestGhostDistance IS medium THEN RunFromNearbyGhost IS nervious;
+	RULE 37 : IF Edible IS true AND PacmanDistance IS medium AND PacmanDistanceConfidence IS high AND NearestGhostDistance IS close THEN RunFromNearbyGhost IS nervious;
+	RULE 38 : IF Edible IS true AND PacmanDistance IS medium AND PacmanDistanceConfidence IS medium AND NearestGhostDistance IS medium THEN RunFromNearbyGhost IS nervious;
+	RULE 39 : IF Edible IS true AND PacmanDistance IS medium AND PacmanDistanceConfidence IS medium AND NearestGhostDistance IS far THEN RunFromNearbyGhost IS nervious;
+	RULE 40 : IF Edible IS true AND PacmanDistance IS far AND PacmanDistanceConfidence IS high AND NearestGhostDistance IS far THEN RunFromNearbyGhost IS emergency;
+	RULE 41 : IF Edible IS true AND PacmanDistance IS far AND PacmanDistanceConfidence IS medium AND NearestGhostDistance IS medium THEN RunFromNearbyGhost IS nervious;
+	RULE 42 : IF Edible IS true AND NearestGhostDistance IS far THEN RunFromNearbyGhost IS calm;
+	
+	
+	RULE 43 : IF Edible IS true AND EdibleTime IS short AND PacmanDistance IS far AND PacmanDistanceConfidence IS high THEN ChasePacman IS emergency;
+	RULE 44 : IF Edible IS true AND EdibleTime IS short AND PacmanDistance IS far AND PacmanDistanceConfidence IS medium THEN ChasePacman IS emergency;
+	RULE 45 : IF Edible IS true AND EdibleTime IS short AND PacmanDistance IS far AND PacmanDistanceConfidence IS low THEN ChasePacman IS calm;
+	RULE 46 : IF Edible IS true AND EdibleTime IS short AND PacmanDistance IS medium AND PacmanDistanceConfidence IS high THEN ChasePacman IS nervious;
+	RULE 47 : IF Edible IS true AND EdibleTime IS short AND PacmanDistance IS medium AND PacmanDistanceConfidence IS medium THEN ChasePacman IS nervious;
+	RULE 48 : IF Edible IS true AND EdibleTime IS short AND PacmanDistance IS medium AND PacmanDistanceConfidence IS low THEN ChasePacman IS calm;
+	RULE 49 : IF Edible IS true AND EdibleTime IS short AND PacmanDistance IS close AND PacmanDistanceConfidence IS high THEN ChasePacman IS calm;
+	RULE 50 : IF Edible IS true AND EdibleTime IS short AND PacmanDistance IS close AND PacmanDistanceConfidence IS medium THEN ChasePacman IS calm;
+	RULE 51 : IF Edible IS true AND EdibleTime IS short AND PacmanDistance IS close AND PacmanDistanceConfidence IS low THEN ChasePacman IS calm;
+	
+	RULE 52 : IF Edible IS false AND PacmanDistance IS close AND PacmanDistanceConfidence IS high AND PacmanToClosestPPillDistance IS close AND PacmanToClosestPPillDistanceConfidence IS high THEN ChasePacman IS calm;
+	RULE 53 : IF Edible IS false AND PacmanDistance IS close AND PacmanDistanceConfidence IS high AND PacmanToClosestPPillDistance IS close AND PacmanToClosestPPillDistanceConfidence IS medium THEN ChasePacman IS calm;
+	RULE 54 : IF Edible IS false AND PacmanDistance IS close AND PacmanDistanceConfidence IS high AND PacmanToClosestPPillDistance IS close AND PacmanToClosestPPillDistanceConfidence IS low THEN ChasePacman IS nervious;
+	RULE 55 : IF Edible IS false AND PacmanDistance IS close AND PacmanDistanceConfidence IS medium AND PacmanToClosestPPillDistance IS close AND PacmanToClosestPPillDistanceConfidence IS high THEN ChasePacman IS nervious;
+	RULE 56 : IF Edible IS false AND PacmanDistance IS close AND PacmanDistanceConfidence IS medium AND PacmanToClosestPPillDistance IS close AND PacmanToClosestPPillDistanceConfidence IS medium THEN ChasePacman IS nervious;
+	RULE 57 : IF Edible IS false AND PacmanDistance IS close AND PacmanDistanceConfidence IS medium AND PacmanToClosestPPillDistance IS close AND PacmanToClosestPPillDistanceConfidence IS low THEN ChasePacman IS nervious;
+	RULE 58 : IF Edible IS false AND PacmanDistance IS close AND PacmanDistanceConfidence IS low AND PacmanToClosestPPillDistance IS close AND PacmanToClosestPPillDistanceConfidence IS high THEN ChasePacman IS nervious;
+	RULE 59 : IF Edible IS false AND PacmanDistance IS close AND PacmanDistanceConfidence IS low AND PacmanToClosestPPillDistance IS close AND PacmanToClosestPPillDistanceConfidence IS medium THEN ChasePacman IS nervious;
+	RULE 60 : IF Edible IS false AND PacmanDistance IS close AND PacmanDistanceConfidence IS low AND PacmanToClosestPPillDistance IS close AND PacmanToClosestPPillDistanceConfidence IS low THEN ChasePacman IS nervious;
+	
+	RULE 61 : IF Edible IS false AND PacmanDistance IS medium AND PacmanDistanceConfidence IS high AND PacmanToClosestPPillDistance IS close AND PacmanToClosestPPillDistanceConfidence IS high THEN ChasePacman IS nervious;
+	RULE 62 : IF Edible IS false AND PacmanDistance IS medium AND PacmanDistanceConfidence IS high AND PacmanToClosestPPillDistance IS close AND PacmanToClosestPPillDistanceConfidence IS medium THEN ChasePacman IS nervious;
+	RULE 63 : IF Edible IS false AND PacmanDistance IS medium AND PacmanDistanceConfidence IS high AND PacmanToClosestPPillDistance IS close AND PacmanToClosestPPillDistanceConfidence IS low THEN ChasePacman IS nervious;
+	RULE 64 : IF Edible IS false AND PacmanDistance IS medium AND PacmanDistanceConfidence IS medium AND PacmanToClosestPPillDistance IS close AND PacmanToClosestPPillDistanceConfidence IS high THEN ChasePacman IS nervious;
+	RULE 65 : IF Edible IS false AND PacmanDistance IS medium AND PacmanDistanceConfidence IS medium AND PacmanToClosestPPillDistance IS close AND PacmanToClosestPPillDistanceConfidence IS medium THEN ChasePacman IS nervious;
+	RULE 66 : IF Edible IS false AND PacmanDistance IS medium AND PacmanDistanceConfidence IS medium AND PacmanToClosestPPillDistance IS close AND PacmanToClosestPPillDistanceConfidence IS low THEN ChasePacman IS nervious;
+	RULE 67 : IF Edible IS false AND PacmanDistance IS medium AND PacmanDistanceConfidence IS low AND PacmanToClosestPPillDistance IS close AND PacmanToClosestPPillDistanceConfidence IS high THEN ChasePacman IS nervious;
+	RULE 68 : IF Edible IS false AND PacmanDistance IS medium AND PacmanDistanceConfidence IS low AND PacmanToClosestPPillDistance IS close AND PacmanToClosestPPillDistanceConfidence IS medium THEN ChasePacman IS nervious;
+	RULE 69 : IF Edible IS false AND PacmanDistance IS medium AND PacmanDistanceConfidence IS low AND PacmanToClosestPPillDistance IS close AND PacmanToClosestPPillDistanceConfidence IS low THEN ChasePacman IS nervious;
+	
+	RULE 70 : IF Edible IS false AND PacmanDistance IS far AND PacmanDistanceConfidence IS high AND PacmanToClosestPPillDistance IS close AND PacmanToClosestPPillDistanceConfidence IS high THEN ChasePacman IS calm;
+	RULE 71 : IF Edible IS false AND PacmanDistance IS far AND PacmanDistanceConfidence IS high AND PacmanToClosestPPillDistance IS close AND PacmanToClosestPPillDistanceConfidence IS medium THEN ChasePacman IS calm;
+	RULE 72 : IF Edible IS false AND PacmanDistance IS far AND PacmanDistanceConfidence IS high AND PacmanToClosestPPillDistance IS close AND PacmanToClosestPPillDistanceConfidence IS low THEN ChasePacman IS calm;
+	RULE 73 : IF Edible IS false AND PacmanDistance IS far AND PacmanDistanceConfidence IS medium AND PacmanToClosestPPillDistance IS close AND PacmanToClosestPPillDistanceConfidence IS high THEN ChasePacman IS calm;
+	RULE 74 : IF Edible IS false AND PacmanDistance IS far AND PacmanDistanceConfidence IS medium AND PacmanToClosestPPillDistance IS close AND PacmanToClosestPPillDistanceConfidence IS medium THEN ChasePacman IS calm;
+	RULE 75 : IF Edible IS false AND PacmanDistance IS far AND PacmanDistanceConfidence IS medium AND PacmanToClosestPPillDistance IS close AND PacmanToClosestPPillDistanceConfidence IS low THEN ChasePacman IS calm;
+	RULE 76 : IF Edible IS false AND PacmanDistance IS far AND PacmanDistanceConfidence IS low AND PacmanToClosestPPillDistance IS close AND PacmanToClosestPPillDistanceConfidence IS high THEN ChasePacman IS calm;
+	RULE 77 : IF Edible IS false AND PacmanDistance IS far AND PacmanDistanceConfidence IS low AND PacmanToClosestPPillDistance IS close AND PacmanToClosestPPillDistanceConfidence IS medium THEN ChasePacman IS calm;
+	RULE 78 : IF Edible IS false AND PacmanDistance IS far AND PacmanDistanceConfidence IS low AND PacmanToClosestPPillDistance IS close AND PacmanToClosestPPillDistanceConfidence IS low THEN ChasePacman IS calm;
+	
+	RULE 79 : IF Edible IS false AND PacmanDistance IS close AND PacmanDistanceConfidence IS high AND PacmanToClosestPPillDistance IS medium AND PacmanToClosestPPillDistanceConfidence IS high THEN ChasePacman IS emergency;
+	RULE 80 : IF Edible IS false AND PacmanDistance IS close AND PacmanDistanceConfidence IS high AND PacmanToClosestPPillDistance IS medium AND PacmanToClosestPPillDistanceConfidence IS medium THEN ChasePacman IS nervious;
+	RULE 81 : IF Edible IS false AND PacmanDistance IS close AND PacmanDistanceConfidence IS high AND PacmanToClosestPPillDistance IS medium AND PacmanToClosestPPillDistanceConfidence IS low THEN ChasePacman IS nervious;
+	RULE 82 : IF Edible IS false AND PacmanDistance IS close AND PacmanDistanceConfidence IS medium AND PacmanToClosestPPillDistance IS medium AND PacmanToClosestPPillDistanceConfidence IS high THEN ChasePacman IS nervious;
+	RULE 83 : IF Edible IS false AND PacmanDistance IS close AND PacmanDistanceConfidence IS medium AND PacmanToClosestPPillDistance IS medium AND PacmanToClosestPPillDistanceConfidence IS medium THEN ChasePacman IS nervious;
+	RULE 84 : IF Edible IS false AND PacmanDistance IS close AND PacmanDistanceConfidence IS medium AND PacmanToClosestPPillDistance IS medium AND PacmanToClosestPPillDistanceConfidence IS low THEN ChasePacman IS emergency;
+	RULE 85 : IF Edible IS false AND PacmanDistance IS close AND PacmanDistanceConfidence IS low AND PacmanToClosestPPillDistance IS medium AND PacmanToClosestPPillDistanceConfidence IS high THEN ChasePacman IS emergency;
+	RULE 86 : IF Edible IS false AND PacmanDistance IS close AND PacmanDistanceConfidence IS low AND PacmanToClosestPPillDistance IS medium AND PacmanToClosestPPillDistanceConfidence IS medium THEN ChasePacman IS emergency;
+	RULE 87 : IF Edible IS false AND PacmanDistance IS close AND PacmanDistanceConfidence IS low AND PacmanToClosestPPillDistance IS medium AND PacmanToClosestPPillDistanceConfidence IS low THEN ChasePacman IS emergency;
+	
+	RULE 88 : IF Edible IS false AND PacmanDistance IS medium AND PacmanDistanceConfidence IS high AND PacmanToClosestPPillDistance IS medium AND PacmanToClosestPPillDistanceConfidence IS high THEN ChasePacman IS nervious;
+	RULE 89 : IF Edible IS false AND PacmanDistance IS medium AND PacmanDistanceConfidence IS high AND PacmanToClosestPPillDistance IS medium AND PacmanToClosestPPillDistanceConfidence IS medium THEN ChasePacman IS nervious;
+	RULE 90 : IF Edible IS false AND PacmanDistance IS medium AND PacmanDistanceConfidence IS high AND PacmanToClosestPPillDistance IS medium AND PacmanToClosestPPillDistanceConfidence IS low THEN ChasePacman IS nervious;
+	RULE 91 : IF Edible IS false AND PacmanDistance IS medium AND PacmanDistanceConfidence IS medium AND PacmanToClosestPPillDistance IS medium AND PacmanToClosestPPillDistanceConfidence IS high THEN ChasePacman IS nervious;
+	RULE 92 : IF Edible IS false AND PacmanDistance IS medium AND PacmanDistanceConfidence IS medium AND PacmanToClosestPPillDistance IS medium AND PacmanToClosestPPillDistanceConfidence IS medium THEN ChasePacman IS nervious;
+	RULE 93 : IF Edible IS false AND PacmanDistance IS medium AND PacmanDistanceConfidence IS medium AND PacmanToClosestPPillDistance IS medium AND PacmanToClosestPPillDistanceConfidence IS low THEN ChasePacman IS nervious;
+	RULE 94 : IF Edible IS false AND PacmanDistance IS medium AND PacmanDistanceConfidence IS low AND PacmanToClosestPPillDistance IS medium AND PacmanToClosestPPillDistanceConfidence IS high THEN ChasePacman IS nervious;
+	RULE 95 : IF Edible IS false AND PacmanDistance IS medium AND PacmanDistanceConfidence IS low AND PacmanToClosestPPillDistance IS medium AND PacmanToClosestPPillDistanceConfidence IS medium THEN ChasePacman IS nervious;
+	RULE 96 : IF Edible IS false AND PacmanDistance IS medium AND PacmanDistanceConfidence IS low AND PacmanToClosestPPillDistance IS medium AND PacmanToClosestPPillDistanceConfidence IS low THEN ChasePacman IS nervious;
+	
+	RULE 97 : IF Edible IS false AND PacmanDistance IS far AND PacmanDistanceConfidence IS high AND PacmanToClosestPPillDistance IS medium AND PacmanToClosestPPillDistanceConfidence IS high THEN ChasePacman IS emergency;
+	RULE 98 : IF Edible IS false AND PacmanDistance IS far AND PacmanDistanceConfidence IS high AND PacmanToClosestPPillDistance IS medium AND PacmanToClosestPPillDistanceConfidence IS medium THEN ChasePacman IS emergency;
+	RULE 99 : IF Edible IS false AND PacmanDistance IS far AND PacmanDistanceConfidence IS high AND PacmanToClosestPPillDistance IS medium AND PacmanToClosestPPillDistanceConfidence IS low THEN ChasePacman IS emergency;
+	RULE 100 : IF Edible IS false AND PacmanDistance IS far AND PacmanDistanceConfidence IS medium AND PacmanToClosestPPillDistance IS medium AND PacmanToClosestPPillDistanceConfidence IS high THEN ChasePacman IS emergency;
+	RULE 101 : IF Edible IS false AND PacmanDistance IS far AND PacmanDistanceConfidence IS medium AND PacmanToClosestPPillDistance IS medium AND PacmanToClosestPPillDistanceConfidence IS medium THEN ChasePacman IS emergency;
+	RULE 102 : IF Edible IS false AND PacmanDistance IS far AND PacmanDistanceConfidence IS medium AND PacmanToClosestPPillDistance IS medium AND PacmanToClosestPPillDistanceConfidence IS low THEN ChasePacman IS emergency;
+	RULE 103 : IF Edible IS false AND PacmanDistance IS far AND PacmanDistanceConfidence IS low AND PacmanToClosestPPillDistance IS medium AND PacmanToClosestPPillDistanceConfidence IS high THEN ChasePacman IS nervious;
+	RULE 104 : IF Edible IS false AND PacmanDistance IS far AND PacmanDistanceConfidence IS low AND PacmanToClosestPPillDistance IS medium AND PacmanToClosestPPillDistanceConfidence IS medium THEN ChasePacman IS nervious;
+	RULE 105 : IF Edible IS false AND PacmanDistance IS far AND PacmanDistanceConfidence IS low AND PacmanToClosestPPillDistance IS medium AND PacmanToClosestPPillDistanceConfidence IS low THEN ChasePacman IS nervious;
+
+	RULE 106 : IF Edible IS false AND PacmanDistance IS close AND PacmanDistanceConfidence IS high AND PacmanToClosestPPillDistance IS far AND PacmanToClosestPPillDistanceConfidence IS high THEN ChasePacman IS emergency;
+	RULE 107 : IF Edible IS false AND PacmanDistance IS close AND PacmanDistanceConfidence IS high AND PacmanToClosestPPillDistance IS far AND PacmanToClosestPPillDistanceConfidence IS medium THEN ChasePacman IS nervious;
+	RULE 108 : IF Edible IS false AND PacmanDistance IS close AND PacmanDistanceConfidence IS high AND PacmanToClosestPPillDistance IS far AND PacmanToClosestPPillDistanceConfidence IS low THEN ChasePacman IS nervious;
+	RULE 109 : IF Edible IS false AND PacmanDistance IS close AND PacmanDistanceConfidence IS medium AND PacmanToClosestPPillDistance IS far AND PacmanToClosestPPillDistanceConfidence IS high THEN ChasePacman IS emergency;
+	RULE 110 : IF Edible IS false AND PacmanDistance IS close AND PacmanDistanceConfidence IS medium AND PacmanToClosestPPillDistance IS far AND PacmanToClosestPPillDistanceConfidence IS medium THEN ChasePacman IS emergency;
+	RULE 111 : IF Edible IS false AND PacmanDistance IS close AND PacmanDistanceConfidence IS medium AND PacmanToClosestPPillDistance IS far AND PacmanToClosestPPillDistanceConfidence IS low THEN ChasePacman IS emergency;
+	RULE 112 : IF Edible IS false AND PacmanDistance IS close AND PacmanDistanceConfidence IS low AND PacmanToClosestPPillDistance IS far AND PacmanToClosestPPillDistanceConfidence IS high THEN ChasePacman IS emergency;
+	RULE 113 : IF Edible IS false AND PacmanDistance IS close AND PacmanDistanceConfidence IS low AND PacmanToClosestPPillDistance IS far AND PacmanToClosestPPillDistanceConfidence IS medium THEN ChasePacman IS emergency;
+	RULE 114 : IF Edible IS false AND PacmanDistance IS close AND PacmanDistanceConfidence IS low AND PacmanToClosestPPillDistance IS far AND PacmanToClosestPPillDistanceConfidence IS low THEN ChasePacman IS emergency;
+	
+	RULE 115 : IF Edible IS false AND PacmanDistance IS medium AND PacmanDistanceConfidence IS high AND PacmanToClosestPPillDistance IS far AND PacmanToClosestPPillDistanceConfidence IS high THEN ChasePacman IS nervious;
+	RULE 116 : IF Edible IS false AND PacmanDistance IS medium AND PacmanDistanceConfidence IS high AND PacmanToClosestPPillDistance IS far AND PacmanToClosestPPillDistanceConfidence IS medium THEN ChasePacman IS emergency;
+	RULE 117 : IF Edible IS false AND PacmanDistance IS medium AND PacmanDistanceConfidence IS high AND PacmanToClosestPPillDistance IS far AND PacmanToClosestPPillDistanceConfidence IS low THEN ChasePacman IS emergency;
+	RULE 118 : IF Edible IS false AND PacmanDistance IS medium AND PacmanDistanceConfidence IS medium AND PacmanToClosestPPillDistance IS far AND PacmanToClosestPPillDistanceConfidence IS high THEN ChasePacman IS nervious;
+	RULE 119 : IF Edible IS false AND PacmanDistance IS medium AND PacmanDistanceConfidence IS medium AND PacmanToClosestPPillDistance IS far AND PacmanToClosestPPillDistanceConfidence IS medium THEN ChasePacman IS emergency;
+	RULE 120 : IF Edible IS false AND PacmanDistance IS medium AND PacmanDistanceConfidence IS medium AND PacmanToClosestPPillDistance IS far AND PacmanToClosestPPillDistanceConfidence IS low THEN ChasePacman IS nervious;
+	RULE 121 : IF Edible IS false AND PacmanDistance IS medium AND PacmanDistanceConfidence IS low AND PacmanToClosestPPillDistance IS far AND PacmanToClosestPPillDistanceConfidence IS high THEN ChasePacman IS emergency;
+	RULE 122 : IF Edible IS false AND PacmanDistance IS medium AND PacmanDistanceConfidence IS low AND PacmanToClosestPPillDistance IS far AND PacmanToClosestPPillDistanceConfidence IS medium THEN ChasePacman IS emergency;
+	RULE 123 : IF Edible IS false AND PacmanDistance IS medium AND PacmanDistanceConfidence IS low AND PacmanToClosestPPillDistance IS far AND PacmanToClosestPPillDistanceConfidence IS low THEN ChasePacman IS nervious;
+	
+	RULE 124 : IF Edible IS false AND PacmanDistance IS far AND PacmanDistanceConfidence IS high AND PacmanToClosestPPillDistance IS far AND PacmanToClosestPPillDistanceConfidence IS high THEN ChasePacman IS emergency;
+	RULE 125 : IF Edible IS false AND PacmanDistance IS far AND PacmanDistanceConfidence IS high AND PacmanToClosestPPillDistance IS far AND PacmanToClosestPPillDistanceConfidence IS medium THEN ChasePacman IS emergency;
+	RULE 126 : IF Edible IS false AND PacmanDistance IS far AND PacmanDistanceConfidence IS high AND PacmanToClosestPPillDistance IS far AND PacmanToClosestPPillDistanceConfidence IS low THEN ChasePacman IS emergency;
+	RULE 127 : IF Edible IS false AND PacmanDistance IS far AND PacmanDistanceConfidence IS medium AND PacmanToClosestPPillDistance IS far AND PacmanToClosestPPillDistanceConfidence IS high THEN ChasePacman IS emergency;
+	RULE 128 : IF Edible IS false AND PacmanDistance IS far AND PacmanDistanceConfidence IS medium AND PacmanToClosestPPillDistance IS far AND PacmanToClosestPPillDistanceConfidence IS medium THEN ChasePacman IS emergency;
+	RULE 129 : IF Edible IS false AND PacmanDistance IS far AND PacmanDistanceConfidence IS medium AND PacmanToClosestPPillDistance IS far AND PacmanToClosestPPillDistanceConfidence IS low THEN ChasePacman IS emergency;
+	RULE 130 : IF Edible IS false AND PacmanDistance IS far AND PacmanDistanceConfidence IS low AND PacmanToClosestPPillDistance IS far AND PacmanToClosestPPillDistanceConfidence IS high THEN ChasePacman IS nervious;
+	RULE 131 : IF Edible IS false AND PacmanDistance IS far AND PacmanDistanceConfidence IS low AND PacmanToClosestPPillDistance IS far AND PacmanToClosestPPillDistanceConfidence IS medium THEN ChasePacman IS nervious;
+	RULE 132 : IF Edible IS false AND PacmanDistance IS far AND PacmanDistanceConfidence IS low AND PacmanToClosestPPillDistance IS far AND PacmanToClosestPPillDistanceConfidence IS low THEN ChasePacman IS nervious;
+	
+	RULE 133 : IF Edible IS false AND PacmanDistance IS close AND PacmanDistanceConfidence IS high AND DistanceToClosestPPill IS close AND DistanceToClosestPPillConfidence IS high THEN GoToClosestPPill IS emergency;
+	RULE 134 : IF Edible IS false AND PacmanDistance IS close AND PacmanDistanceConfidence IS high AND DistanceToClosestPPill IS close AND DistanceToClosestPPillConfidence IS medium THEN GoToClosestPPill IS emergency;
+	RULE 135 : IF Edible IS false AND PacmanDistance IS close AND PacmanDistanceConfidence IS high AND DistanceToClosestPPill IS close AND DistanceToClosestPPillConfidence IS low THEN GoToClosestPPill IS nervious;
+	RULE 136 : IF Edible IS false AND PacmanDistance IS close AND PacmanDistanceConfidence IS high AND DistanceToClosestPPill IS medium AND DistanceToClosestPPillConfidence IS high THEN GoToClosestPPill IS nervious;
+	RULE 137 : IF Edible IS false AND PacmanDistance IS close AND PacmanDistanceConfidence IS high AND DistanceToClosestPPill IS medium AND DistanceToClosestPPillConfidence IS medium THEN GoToClosestPPill IS nervious;
+	RULE 138 : IF Edible IS false AND PacmanDistance IS close AND PacmanDistanceConfidence IS high AND DistanceToClosestPPill IS medium AND DistanceToClosestPPillConfidence IS low THEN GoToClosestPPill IS calm;
+	RULE 139 : IF Edible IS false AND PacmanDistance IS close AND PacmanDistanceConfidence IS high AND DistanceToClosestPPill IS far AND DistanceToClosestPPillConfidence IS high THEN GoToClosestPPill IS calm;
+	RULE 140 : IF Edible IS false AND PacmanDistance IS close AND PacmanDistanceConfidence IS high AND DistanceToClosestPPill IS far AND DistanceToClosestPPillConfidence IS medium THEN GoToClosestPPill IS calm;
+	RULE 141 : IF Edible IS false AND PacmanDistance IS close AND PacmanDistanceConfidence IS high AND DistanceToClosestPPill IS far AND DistanceToClosestPPillConfidence IS low THEN GoToClosestPPill IS calm;
+	
+	RULE 142 : IF Edible IS false AND PacmanDistance IS close AND PacmanDistanceConfidence IS medium AND DistanceToClosestPPill IS close AND DistanceToClosestPPillConfidence IS high THEN GoToClosestPPill IS nervious;
+	RULE 143 : IF Edible IS false AND PacmanDistance IS close AND PacmanDistanceConfidence IS medium AND DistanceToClosestPPill IS close AND DistanceToClosestPPillConfidence IS medium THEN GoToClosestPPill IS nervious;
+	RULE 144 : IF Edible IS false AND PacmanDistance IS close AND PacmanDistanceConfidence IS medium AND DistanceToClosestPPill IS close AND DistanceToClosestPPillConfidence IS low THEN GoToClosestPPill IS nervious;
+	RULE 145 : IF Edible IS false AND PacmanDistance IS close AND PacmanDistanceConfidence IS medium AND DistanceToClosestPPill IS medium AND DistanceToClosestPPillConfidence IS high THEN GoToClosestPPill IS nervious;
+	RULE 146 : IF Edible IS false AND PacmanDistance IS close AND PacmanDistanceConfidence IS medium AND DistanceToClosestPPill IS medium AND DistanceToClosestPPillConfidence IS medium THEN GoToClosestPPill IS nervious;
+	RULE 147 : IF Edible IS false AND PacmanDistance IS close AND PacmanDistanceConfidence IS medium AND DistanceToClosestPPill IS medium AND DistanceToClosestPPillConfidence IS low THEN GoToClosestPPill IS nervious;
+	RULE 148 : IF Edible IS false AND PacmanDistance IS close AND PacmanDistanceConfidence IS medium AND DistanceToClosestPPill IS far AND DistanceToClosestPPillConfidence IS high THEN GoToClosestPPill IS nervious;
+	RULE 149 : IF Edible IS false AND PacmanDistance IS close AND PacmanDistanceConfidence IS medium AND DistanceToClosestPPill IS far AND DistanceToClosestPPillConfidence IS medium THEN GoToClosestPPill IS nervious;
+	RULE 150 : IF Edible IS false AND PacmanDistance IS close AND PacmanDistanceConfidence IS medium AND DistanceToClosestPPill IS far AND DistanceToClosestPPillConfidence IS low THEN GoToClosestPPill IS nervious;
+	
+	RULE 151 : IF Edible IS false AND PacmanDistance IS close AND PacmanDistanceConfidence IS low AND DistanceToClosestPPill IS close AND DistanceToClosestPPillConfidence IS high THEN GoToClosestPPill IS nervious;
+	RULE 152 : IF Edible IS false AND PacmanDistance IS close AND PacmanDistanceConfidence IS low AND DistanceToClosestPPill IS close AND DistanceToClosestPPillConfidence IS medium THEN GoToClosestPPill IS nervious;
+	RULE 153 : IF Edible IS false AND PacmanDistance IS close AND PacmanDistanceConfidence IS low AND DistanceToClosestPPill IS close AND DistanceToClosestPPillConfidence IS low THEN GoToClosestPPill IS nervious;
+	RULE 154 : IF Edible IS false AND PacmanDistance IS close AND PacmanDistanceConfidence IS low AND DistanceToClosestPPill IS medium AND DistanceToClosestPPillConfidence IS high THEN GoToClosestPPill IS nervious;
+	RULE 155 : IF Edible IS false AND PacmanDistance IS close AND PacmanDistanceConfidence IS low AND DistanceToClosestPPill IS medium AND DistanceToClosestPPillConfidence IS medium THEN GoToClosestPPill IS nervious;
+	RULE 156 : IF Edible IS false AND PacmanDistance IS close AND PacmanDistanceConfidence IS low AND DistanceToClosestPPill IS medium AND DistanceToClosestPPillConfidence IS low THEN GoToClosestPPill IS nervious;
+	RULE 157 : IF Edible IS false AND PacmanDistance IS close AND PacmanDistanceConfidence IS low AND DistanceToClosestPPill IS far AND DistanceToClosestPPillConfidence IS high THEN GoToClosestPPill IS nervious;
+	RULE 158 : IF Edible IS false AND PacmanDistance IS close AND PacmanDistanceConfidence IS low AND DistanceToClosestPPill IS far AND DistanceToClosestPPillConfidence IS medium THEN GoToClosestPPill IS nervious;
+	RULE 159 : IF Edible IS false AND PacmanDistance IS close AND PacmanDistanceConfidence IS low AND DistanceToClosestPPill IS far AND DistanceToClosestPPillConfidence IS low THEN GoToClosestPPill IS nervious;
+	
+	RULE 160 : IF Edible IS false AND PacmanDistance IS medium AND PacmanDistanceConfidence IS high AND DistanceToClosestPPill IS close AND DistanceToClosestPPillConfidence IS high THEN GoToClosestPPill IS emergency;
+	RULE 161 : IF Edible IS false AND PacmanDistance IS medium AND PacmanDistanceConfidence IS high AND DistanceToClosestPPill IS close AND DistanceToClosestPPillConfidence IS medium THEN GoToClosestPPill IS emergency;
+	RULE 162 : IF Edible IS false AND PacmanDistance IS medium AND PacmanDistanceConfidence IS high AND DistanceToClosestPPill IS close AND DistanceToClosestPPillConfidence IS low THEN GoToClosestPPill IS nervious;
+	RULE 163 : IF Edible IS false AND PacmanDistance IS medium AND PacmanDistanceConfidence IS high AND DistanceToClosestPPill IS medium AND DistanceToClosestPPillConfidence IS high THEN GoToClosestPPill IS emergency;
+	RULE 164 : IF Edible IS false AND PacmanDistance IS medium AND PacmanDistanceConfidence IS high AND DistanceToClosestPPill IS medium AND DistanceToClosestPPillConfidence IS medium THEN GoToClosestPPill IS emergency;
+	RULE 165 : IF Edible IS false AND PacmanDistance IS medium AND PacmanDistanceConfidence IS high AND DistanceToClosestPPill IS medium AND DistanceToClosestPPillConfidence IS low THEN GoToClosestPPill IS nervious;
+	RULE 166 : IF Edible IS false AND PacmanDistance IS medium AND PacmanDistanceConfidence IS high AND DistanceToClosestPPill IS far AND DistanceToClosestPPillConfidence IS high THEN GoToClosestPPill IS emergency;
+	RULE 167 : IF Edible IS false AND PacmanDistance IS medium AND PacmanDistanceConfidence IS high AND DistanceToClosestPPill IS far AND DistanceToClosestPPillConfidence IS medium THEN GoToClosestPPill IS nervious;
+	RULE 168 : IF Edible IS false AND PacmanDistance IS medium AND PacmanDistanceConfidence IS high AND DistanceToClosestPPill IS far AND DistanceToClosestPPillConfidence IS low THEN GoToClosestPPill IS nervious;
+	
+	RULE 169 : IF Edible IS false AND PacmanDistance IS medium AND PacmanDistanceConfidence IS medium AND DistanceToClosestPPill IS close AND DistanceToClosestPPillConfidence IS high THEN GoToClosestPPill IS nervious;
+	RULE 170 : IF Edible IS false AND PacmanDistance IS medium AND PacmanDistanceConfidence IS medium AND DistanceToClosestPPill IS close AND DistanceToClosestPPillConfidence IS medium THEN GoToClosestPPill IS nervious;
+	RULE 171 : IF Edible IS false AND PacmanDistance IS medium AND PacmanDistanceConfidence IS medium AND DistanceToClosestPPill IS close AND DistanceToClosestPPillConfidence IS low THEN GoToClosestPPill IS calm;
+	RULE 172 : IF Edible IS false AND PacmanDistance IS medium AND PacmanDistanceConfidence IS medium AND DistanceToClosestPPill IS medium AND DistanceToClosestPPillConfidence IS high THEN GoToClosestPPill IS nervious;
+	RULE 173 : IF Edible IS false AND PacmanDistance IS medium AND PacmanDistanceConfidence IS medium AND DistanceToClosestPPill IS medium AND DistanceToClosestPPillConfidence IS medium THEN GoToClosestPPill IS nervious;
+	RULE 174 : IF Edible IS false AND PacmanDistance IS medium AND PacmanDistanceConfidence IS medium AND DistanceToClosestPPill IS medium AND DistanceToClosestPPillConfidence IS low THEN GoToClosestPPill IS calm;
+	RULE 175 : IF Edible IS false AND PacmanDistance IS medium AND PacmanDistanceConfidence IS medium AND DistanceToClosestPPill IS far AND DistanceToClosestPPillConfidence IS high THEN GoToClosestPPill IS nervious;
+	RULE 176 : IF Edible IS false AND PacmanDistance IS medium AND PacmanDistanceConfidence IS medium AND DistanceToClosestPPill IS far AND DistanceToClosestPPillConfidence IS medium THEN GoToClosestPPill IS nervious;
+	RULE 177 : IF Edible IS false AND PacmanDistance IS medium AND PacmanDistanceConfidence IS medium AND DistanceToClosestPPill IS far AND DistanceToClosestPPillConfidence IS low THEN GoToClosestPPill IS calm;
+	
+	RULE 178 : IF Edible IS false AND PacmanDistance IS medium AND PacmanDistanceConfidence IS low AND DistanceToClosestPPill IS close AND DistanceToClosestPPillConfidence IS high THEN GoToClosestPPill IS nervious;
+	RULE 179 : IF Edible IS false AND PacmanDistance IS medium AND PacmanDistanceConfidence IS low AND DistanceToClosestPPill IS close AND DistanceToClosestPPillConfidence IS medium THEN GoToClosestPPill IS calm;
+	RULE 180 : IF Edible IS false AND PacmanDistance IS medium AND PacmanDistanceConfidence IS low AND DistanceToClosestPPill IS close AND DistanceToClosestPPillConfidence IS low THEN GoToClosestPPill IS calm;
+	RULE 181 : IF Edible IS false AND PacmanDistance IS medium AND PacmanDistanceConfidence IS low AND DistanceToClosestPPill IS medium AND DistanceToClosestPPillConfidence IS high THEN GoToClosestPPill IS nervious;
+	RULE 182 : IF Edible IS false AND PacmanDistance IS medium AND PacmanDistanceConfidence IS low AND DistanceToClosestPPill IS medium AND DistanceToClosestPPillConfidence IS medium THEN GoToClosestPPill IS calm;
+	RULE 183 : IF Edible IS false AND PacmanDistance IS medium AND PacmanDistanceConfidence IS low AND DistanceToClosestPPill IS medium AND DistanceToClosestPPillConfidence IS low THEN GoToClosestPPill IS calm;
+	RULE 184 : IF Edible IS false AND PacmanDistance IS medium AND PacmanDistanceConfidence IS low AND DistanceToClosestPPill IS far AND DistanceToClosestPPillConfidence IS high THEN GoToClosestPPill IS nervious;
+	RULE 185 : IF Edible IS false AND PacmanDistance IS medium AND PacmanDistanceConfidence IS low AND DistanceToClosestPPill IS far AND DistanceToClosestPPillConfidence IS medium THEN GoToClosestPPill IS calm;
+	RULE 186 : IF Edible IS false AND PacmanDistance IS medium AND PacmanDistanceConfidence IS low AND DistanceToClosestPPill IS far AND DistanceToClosestPPillConfidence IS low THEN GoToClosestPPill IS calm;
+	
+	RULE 187 : IF Edible IS false AND PacmanDistance IS far AND PacmanDistanceConfidence IS high AND DistanceToClosestPPill IS close AND DistanceToClosestPPillConfidence IS high THEN GoToClosestPPill IS calm;
+	RULE 188 : IF Edible IS false AND PacmanDistance IS far AND PacmanDistanceConfidence IS high AND DistanceToClosestPPill IS close AND DistanceToClosestPPillConfidence IS medium THEN GoToClosestPPill IS calm;
+	RULE 189 : IF Edible IS false AND PacmanDistance IS far AND PacmanDistanceConfidence IS high AND DistanceToClosestPPill IS close AND DistanceToClosestPPillConfidence IS low THEN GoToClosestPPill IS calm;
+	RULE 190 : IF Edible IS false AND PacmanDistance IS far AND PacmanDistanceConfidence IS high AND DistanceToClosestPPill IS medium AND DistanceToClosestPPillConfidence IS high THEN GoToClosestPPill IS calm;
+	RULE 191 : IF Edible IS false AND PacmanDistance IS far AND PacmanDistanceConfidence IS high AND DistanceToClosestPPill IS medium AND DistanceToClosestPPillConfidence IS medium THEN GoToClosestPPill IS calm;
+	RULE 192 : IF Edible IS false AND PacmanDistance IS far AND PacmanDistanceConfidence IS high AND DistanceToClosestPPill IS medium AND DistanceToClosestPPillConfidence IS low THEN GoToClosestPPill IS calm;
+	RULE 193 : IF Edible IS false AND PacmanDistance IS far AND PacmanDistanceConfidence IS high AND DistanceToClosestPPill IS far AND DistanceToClosestPPillConfidence IS high THEN GoToClosestPPill IS calm;
+	RULE 194 : IF Edible IS false AND PacmanDistance IS far AND PacmanDistanceConfidence IS high AND DistanceToClosestPPill IS far AND DistanceToClosestPPillConfidence IS medium THEN GoToClosestPPill IS calm;
+	RULE 195 : IF Edible IS false AND PacmanDistance IS far AND PacmanDistanceConfidence IS high AND DistanceToClosestPPill IS far AND DistanceToClosestPPillConfidence IS low THEN GoToClosestPPill IS calm;
+	
+	RULE 196 : IF Edible IS false AND PacmanDistance IS far AND PacmanDistanceConfidence IS medium AND DistanceToClosestPPill IS close AND DistanceToClosestPPillConfidence IS high THEN GoToClosestPPill IS calm;
+	RULE 197 : IF Edible IS false AND PacmanDistance IS far AND PacmanDistanceConfidence IS medium AND DistanceToClosestPPill IS close AND DistanceToClosestPPillConfidence IS medium THEN GoToClosestPPill IS calm;
+	RULE 198 : IF Edible IS false AND PacmanDistance IS far AND PacmanDistanceConfidence IS medium AND DistanceToClosestPPill IS close AND DistanceToClosestPPillConfidence IS low THEN GoToClosestPPill IS calm;
+	RULE 199 : IF Edible IS false AND PacmanDistance IS far AND PacmanDistanceConfidence IS medium AND DistanceToClosestPPill IS medium AND DistanceToClosestPPillConfidence IS high THEN GoToClosestPPill IS calm;
+	RULE 200 : IF Edible IS false AND PacmanDistance IS far AND PacmanDistanceConfidence IS medium AND DistanceToClosestPPill IS medium AND DistanceToClosestPPillConfidence IS medium THEN GoToClosestPPill IS calm;
+	RULE 201 : IF Edible IS false AND PacmanDistance IS far AND PacmanDistanceConfidence IS medium AND DistanceToClosestPPill IS medium AND DistanceToClosestPPillConfidence IS low THEN GoToClosestPPill IS calm;
+	RULE 202 : IF Edible IS false AND PacmanDistance IS far AND PacmanDistanceConfidence IS medium AND DistanceToClosestPPill IS far AND DistanceToClosestPPillConfidence IS high THEN GoToClosestPPill IS calm;
+	RULE 203 : IF Edible IS false AND PacmanDistance IS far AND PacmanDistanceConfidence IS medium AND DistanceToClosestPPill IS far AND DistanceToClosestPPillConfidence IS medium THEN GoToClosestPPill IS calm;
+	RULE 204 : IF Edible IS false AND PacmanDistance IS far AND PacmanDistanceConfidence IS medium AND DistanceToClosestPPill IS far AND DistanceToClosestPPillConfidence IS low THEN GoToClosestPPill IS calm;
+	
+	RULE 205 : IF Edible IS false AND PacmanDistance IS far AND PacmanDistanceConfidence IS low AND DistanceToClosestPPill IS close AND DistanceToClosestPPillConfidence IS high THEN GoToClosestPPill IS calm;
+	RULE 206 : IF Edible IS false AND PacmanDistance IS far AND PacmanDistanceConfidence IS low AND DistanceToClosestPPill IS close AND DistanceToClosestPPillConfidence IS medium THEN GoToClosestPPill IS calm;
+	RULE 207 : IF Edible IS false AND PacmanDistance IS far AND PacmanDistanceConfidence IS low AND DistanceToClosestPPill IS close AND DistanceToClosestPPillConfidence IS low THEN GoToClosestPPill IS calm;
+	RULE 208 : IF Edible IS false AND PacmanDistance IS far AND PacmanDistanceConfidence IS low AND DistanceToClosestPPill IS medium AND DistanceToClosestPPillConfidence IS high THEN GoToClosestPPill IS calm;
+	RULE 209 : IF Edible IS false AND PacmanDistance IS far AND PacmanDistanceConfidence IS low AND DistanceToClosestPPill IS medium AND DistanceToClosestPPillConfidence IS medium THEN GoToClosestPPill IS calm;
+	RULE 210 : IF Edible IS false AND PacmanDistance IS far AND PacmanDistanceConfidence IS low AND DistanceToClosestPPill IS medium AND DistanceToClosestPPillConfidence IS low THEN GoToClosestPPill IS calm;
+	RULE 211 : IF Edible IS false AND PacmanDistance IS far AND PacmanDistanceConfidence IS low AND DistanceToClosestPPill IS far AND DistanceToClosestPPillConfidence IS high THEN GoToClosestPPill IS calm;
+	RULE 212 : IF Edible IS false AND PacmanDistance IS far AND PacmanDistanceConfidence IS low AND DistanceToClosestPPill IS far AND DistanceToClosestPPillConfidence IS medium THEN GoToClosestPPill IS calm;
+	RULE 213 : IF Edible IS false AND PacmanDistance IS far AND PacmanDistanceConfidence IS low AND DistanceToClosestPPill IS far AND DistanceToClosestPPillConfidence IS low THEN GoToClosestPPill IS calm;
+	
+	RULE 214 : IF Edible IS false AND PacmanDistance IS far AND PacmanDistanceConfidence IS high AND DistanceToClosestPPill IS medium AND DistanceToClosestPPillConfidence IS high AND NearestGhostDistance IS medium THEN GoToPacManClosestPPill IS emergency;
+	RULE 215 : IF Edible IS false AND PacmanDistance IS far AND PacmanDistanceConfidence IS medium AND DistanceToClosestPPill IS medium AND DistanceToClosestPPillConfidence IS high AND NearestGhostDistance IS medium THEN GoToPacManClosestPPill IS emergency;
+	RULE 216 : IF Edible IS false AND PacmanDistance IS far AND PacmanDistanceConfidence IS high AND DistanceToClosestPPill IS close AND DistanceToClosestPPillConfidence IS high AND NearestGhostDistance IS medium THEN GoToPacManClosestPPill IS emergency;
+	RULE 216 : IF Edible IS false AND PacmanDistance IS far AND PacmanDistanceConfidence IS medium AND DistanceToClosestPPill IS close AND DistanceToClosestPPillConfidence IS high AND NearestGhostDistance IS medium THEN GoToPacManClosestPPill IS emergency;	
+	RULE 217 : IF Edible IS false AND PacmanDistance IS medium AND PacmanDistanceConfidence IS high AND DistanceToClosestPPill IS close AND DistanceToClosestPPillConfidence IS high AND NearestGhostDistance IS medium THEN GoToPacManClosestPPill IS emergency;
+	RULE 218 : IF Edible IS false AND PacmanDistance IS medium AND PacmanDistanceConfidence IS medium AND DistanceToClosestPPill IS close AND DistanceToClosestPPillConfidence IS high AND NearestGhostDistance IS medium THEN GoToPacManClosestPPill IS emergency;
+	
+	RULE 219 : IF Edible IS false AND PacmanDistance IS far AND PacmanDistanceConfidence IS medium AND DistanceToClosestPPill IS medium AND DistanceToClosestPPillConfidence IS medium AND NearestGhostDistance IS medium THEN GoToPacManClosestPPill IS nervious;
+	RULE 220 : IF Edible IS false AND PacmanDistance IS far AND PacmanDistanceConfidence IS high AND DistanceToClosestPPill IS close AND DistanceToClosestPPillConfidence IS medium AND NearestGhostDistance IS medium THEN GoToPacManClosestPPill IS emergency;
+	RULE 221 : IF Edible IS false AND PacmanDistance IS far AND PacmanDistanceConfidence IS medium AND DistanceToClosestPPill IS close AND DistanceToClosestPPillConfidence IS medium AND NearestGhostDistance IS medium THEN GoToPacManClosestPPill IS emergency;	
+	RULE 222 : IF Edible IS false AND PacmanDistance IS medium AND PacmanDistanceConfidence IS high AND DistanceToClosestPPill IS close AND DistanceToClosestPPillConfidence IS medium AND NearestGhostDistance IS medium THEN GoToPacManClosestPPill IS emergency;
+	RULE 223 : IF Edible IS false AND PacmanDistance IS medium AND PacmanDistanceConfidence IS medium AND DistanceToClosestPPill IS close AND DistanceToClosestPPillConfidence IS medium AND NearestGhostDistance IS medium THEN GoToPacManClosestPPill IS emergency;
+	
+	RULE 224 : IF Edible IS false AND PacmanDistance IS medium AND DistanceToClosestPPill IS medium THEN GoToPacManClosestPPill IS nervious;
+	
+	RULE 225 : IF Edible IS false AND PacmanDistance IS close AND DistanceToClosestPPill IS far THEN GoToPacManClosestPPill IS calm;
+	RULE 226 : IF Edible IS false AND PacmanDistance IS close AND DistanceToClosestPPill IS medium THEN GoToPacManClosestPPill IS nervious;
+	
+	RULE 227 : IF Edible IS true AND PacmanDistanceConfidence IS low AND PacmanToClosestPPillDistance IS far AND DistanceToClosestPPill IS far THEN RandomMove IS emergency;
+	
+END_RULEBLOCK
+
+
+
+END_FUNCTION_BLOCK

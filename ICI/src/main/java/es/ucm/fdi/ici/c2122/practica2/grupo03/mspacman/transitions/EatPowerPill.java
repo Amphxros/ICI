@@ -1,0 +1,24 @@
+package es.ucm.fdi.ici.c2122.practica2.grupo03.mspacman.transitions;
+
+import es.ucm.fdi.ici.Input;
+import es.ucm.fdi.ici.fsm.Transition;
+import es.ucm.fdi.ici.c2122.practica2.grupo03.mspacman.MsPacManInput;
+
+
+public class EatPowerPill implements Transition {
+
+	@Override
+	public boolean evaluate(Input in) {
+		MsPacManInput input = (MsPacManInput)in;
+		return input.isClosestGhostEdible() ||
+		    	input.isSecondGhostEdible() ||
+		    	input.isThirdGhostEdible();
+	}
+	
+	@Override
+	public String toString() {
+		return "Eat";
+	}
+
+
+}
